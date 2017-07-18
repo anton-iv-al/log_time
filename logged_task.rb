@@ -1,8 +1,7 @@
-class LoggedTask
-  attr_reader :name
+require_relative 'time_mark'
 
-  def initialize name
-    @name = name
+class LoggedTask
+  def initialize
     @time_list = []
   end
 
@@ -20,7 +19,7 @@ class LoggedTask
   end
 end
 
-def hour_to_sec hours
+def hour_to_sec hours #todo убрать и перенести
   hours * 60 * 60
 end
 
