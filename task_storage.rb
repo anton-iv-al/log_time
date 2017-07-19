@@ -1,7 +1,6 @@
 require_relative 'logged_task'
 
 class TaskStorage
-
   def initialize
     @task_list = {}
   end
@@ -54,5 +53,56 @@ class TaskStorage
   def puts_current_period_duration
     duration = @task_list[active_task].current_period_duration
     puts "last period duration of task '#{active_task}': #{duration} hours"
+  end
+
+  def puts_task_list max_lines
+    names = @task_list.keys
+    if names.empty?
+      puts "no tasks"
+      return
+    end
+
+    max_name_length = names.inject(0){|max, n| n.length > max ? n.length : max}
+    spaces_for_max = 4
+
+    names.delete(@active_task)
+    puts "active task:"
+    puts_task(@active_task, spaces_for_max + max_name_length - @active_task.length)
+    puts @task_list[@active_task].last_paused? ? "paused" : "unpaused"
+
+    puts "***"
+    puts "rest:"
+    names.sort_by!{|n| @task_list[n].last_mark_time}.reverse!
+    names = names.first(max_lines) if max_lines > 0
+
+    names.each{|n| puts_task(n, spaces_for_max + max_name_length - n.length)}
+  end
+
+  private def puts_task name, spaces_count = 4
+    puts "[task]:#{name}"+ '.'*spaces_count + "[last track]:#{@task_list[name].last_mark_time}"
+  end
+
+  def puts_task_marks_list name, max_lines
+    name = @active_task if name.nil?
+    max_lines = -1 if max_lines.nil?
+    raise(TaskNotFoundError, name) if @task_list[name].nil?
+
+    marks = @task_list[name].mark_list
+    if marks.empty?
+      puts "task '#{name}' have no marks"
+      return
+    end
+
+    max_name_length = "unpaused".length
+    spaces_for_max = 4
+
+    marks.reverse!
+    marks = marks.first(max_lines) if max_lines > 0
+
+    marks.each{|n| puts_mark(n.time, n.paused?, spaces_for_max + max_name_length - (n.paused? ? "paused" : "unpaused").length)}
+  end
+
+  private def puts_mark time, is_paused, spaces_count = 4
+    puts "#{is_paused ? "paused" : "unpaused"}"+ '.'*spaces_count + "#{time}"
   end
 end

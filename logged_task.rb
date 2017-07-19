@@ -1,6 +1,8 @@
 require_relative 'time_mark'
 
 class LoggedTask
+  attr_reader :mark_list
+
   def initialize
     @mark_list = []
   end
@@ -16,6 +18,10 @@ class LoggedTask
 
   def last_paused?
     @mark_list.empty? ? false : @mark_list[-1].paused?
+  end
+
+  def last_mark_time
+    @mark_list[-1].time
   end
 
   def total_time

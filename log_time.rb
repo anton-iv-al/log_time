@@ -45,6 +45,25 @@ class LogTimeCLI < Thor
       $logger.info "total #{name}"
     }
   end
+
+  desc "list [MAX_LINES]", ""
+  def list max_lines = -1
+    StorageFile.new.modify{|storage|
+      storage.puts_task_list(max_lines.to_i)
+      $logger.info "list"
+    }
+  end
+
+  desc "marks [TASK_NAME] [MAX_LINES]", ""
+  def marks *params
+    max_lines = params.find{|p| !(/^\d+$/ =~ p).nil?}
+    name = params.find{|p| (/^\d+$/ =~ p).nil?}
+    raise(ArgsError) if params.length != [name, max_lines].find_all{|p| !p.nil?}.length
+    StorageFile.new.modify{|storage|
+      storage.puts_task_marks_list(name, max_lines.to_i)
+      $logger.info "marks"
+    }
+  end
 end
 
 
@@ -64,15 +83,19 @@ end
 begin
   puts "***"
   LogTimeCLI.start(ARGV)
-rescue StorageParseError => err
-  puts err
+rescue StorageParseError
+  puts "can't parse YAML from storage file"
   puts_not_saved
-rescue StorageWriteError => err
-  puts err
+rescue StorageWriteError
+  puts "can't write YAML to storage file"
   puts_not_saved
 rescue NoActiveTaskError
   puts "need active task"
   puts_not_saved
+rescue ArgsError
+  puts "wrong format of command args"
+rescue TaskNotFoundError => err
+  puts "not found task: '#{err}'"
 rescue
   puts_not_saved
 end

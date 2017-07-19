@@ -11,7 +11,7 @@ class StorageFile
       begin
         YAML.load(IO.read(@dir))
       rescue
-        raise StorageParseError, "Can't parse YAML from storage file."
+        raise StorageParseError
       end
     else
       TaskStorage.new
@@ -24,7 +24,7 @@ class StorageFile
         file.puts YAML.dump(storage)
       }
     rescue
-      raise StorageWriteError, "Can't write YAML to storage file."
+      raise StorageWriteError
     end
   end
 
