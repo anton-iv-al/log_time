@@ -87,9 +87,10 @@ class TaskStorage
     max_lines = -1 if max_lines.nil?
     raise(TaskNotFoundError, name) if @task_list[name].nil?
 
+    puts "task: '#{name}'"
     marks = @task_list[name].mark_list
     if marks.empty?
-      puts "task '#{name}' have no marks"
+      puts "have no marks"
       return
     end
 
