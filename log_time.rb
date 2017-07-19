@@ -7,7 +7,7 @@ $logger = Logger.new('time_marks.log', 10, 1024 * 1024)
 $storage_file = StorageFile.new('time_marks.yml')
 
 class LogTimeCLI < Thor
-  desc "track [TASK_NAME]", ""
+  desc "track [TASK_NAME]", "Add track mark on current time to certain task. Default task - current."
   def track name = nil
     $storage_file.modify{|storage|
       begin
@@ -19,7 +19,7 @@ class LogTimeCLI < Thor
     }
   end
 
-  desc "pause", ""
+  desc "pause", "Pause current task."
   def pause
     $storage_file.modify{|storage|
       storage.puts_current_period_duration
@@ -28,7 +28,7 @@ class LogTimeCLI < Thor
     }
   end
 
-  desc "unpause", ""
+  desc "unpause", "Unpause current task."
   def unpause
     $storage_file.modify{|storage|
       storage.set_pause(Time.now, false)
@@ -36,32 +36,29 @@ class LogTimeCLI < Thor
     }
   end
 
-  desc "total [TASK_NAME]", ""
+  desc "total [TASK_NAME]", "Show time, spent to certain task. Default task - current."
   def total name = nil
     $storage_file.modify{|storage|
       storage.puts_total_time(name)
-      $logger.info "total #{name}"
       $storage_file.need_to_save = false
     }
   end
 
-  desc "list [MAX_LINES]", ""
+  desc "list [MAX_LINES]", "Show tasks list. Default max lines - unlimited"
   def list max_lines = -1
     $storage_file.modify{|storage|
       storage.puts_task_list(max_lines.to_i)
-      $logger.info "list"
       $storage_file.need_to_save = false
     }
   end
 
-  desc "marks [TASK_NAME] [MAX_LINES]", ""
+  desc "marks [TASK_NAME] [MAX_LINES]", "Show track marks list of certain task. Default: task - current, max lines - unlimited."
   def marks *params
     max_lines = params.find{|p| !(/^\d+$/ =~ p).nil?}
     name = params.find{|p| (/^\d+$/ =~ p).nil?}
     raise(ArgsError) if params.length != [name, max_lines].find_all{|p| !p.nil?}.length
     $storage_file.modify{|storage|
       storage.puts_task_marks_list(name, max_lines.to_i)
-      $logger.info "marks"
       $storage_file.need_to_save = false
     }
   end

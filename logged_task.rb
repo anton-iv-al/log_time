@@ -1,14 +1,8 @@
 require_relative 'time_mark'
 
 class LoggedTask
-  attr_reader :mark_list
-
   def initialize
     @mark_list = []
-  end
-
-  def self.sec_to_hour secs
-    secs.to_f / 60 / 60
   end
 
   def << mark
@@ -26,7 +20,7 @@ class LoggedTask
 
   def total_time
     last = @mark_list[0]
-    current_period_duration + LoggedTask.sec_to_hour(
+    current_period_duration + TimeMark.sec_to_hour(
         @mark_list.inject(0){|total, mark|
                 pause_period = last.paused?
                 period = total + mark.time.to_i - last.time.to_i
@@ -36,7 +30,22 @@ class LoggedTask
   end
 
   def current_period_duration
-    LoggedTask.sec_to_hour(Time.now.to_i - @mark_list[-1].time.to_i)
+    TimeMark.sec_to_hour(Time.now.to_i - @mark_list[-1].time.to_i)
+  end
+
+  def puts_marks_list max_lines
+    if @mark_list.empty?
+      puts "have no @mark_list"
+      return
+    end
+
+    max_name_length = "unpaused".length
+    spaces_for_max = 4
+
+    marks = @mark_list.reverse
+    marks = @mark_list.first(max_lines) if max_lines > 0
+
+    marks.each{|m| m.puts_mark(spaces_for_max + max_name_length - (m.paused? ? "paused" : "unpaused").length)}
   end
 end
 

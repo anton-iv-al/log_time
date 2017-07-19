@@ -88,22 +88,6 @@ class TaskStorage
     raise(TaskNotFoundError, name) if @task_list[name].nil?
 
     puts "task: '#{name}'"
-    marks = @task_list[name].mark_list
-    if marks.empty?
-      puts "have no marks"
-      return
-    end
-
-    max_name_length = "unpaused".length
-    spaces_for_max = 4
-
-    marks.reverse!
-    marks = marks.first(max_lines) if max_lines > 0
-
-    marks.each{|n| puts_mark(n.time, n.paused?, spaces_for_max + max_name_length - (n.paused? ? "paused" : "unpaused").length)}
-  end
-
-  private def puts_mark time, is_paused, spaces_count = 4
-    puts "#{is_paused ? "paused" : "unpaused"}"+ '.'*spaces_count + "#{time}"
+    @task_list[name].puts_marks_list max_lines
   end
 end
