@@ -5,6 +5,14 @@ class TaskStorage
     @task_list = {}
   end
 
+  def name_valid? name
+    if !(/^\d+$/ =~ name).nil?
+      puts "task name can't consist of only digits"
+      return false
+    end
+    return true
+  end
+
   def new_task name
     @task_list[name] = LoggedTask.new
     puts "created new task: '#{name}'"
@@ -18,6 +26,10 @@ class TaskStorage
 
   def add_time_mark name, time
     if name.nil?
+      if @active_task.nil?
+        puts "no tasks exists, need to specify task name"
+        return false
+      end
       name = @active_task
     else
       if name != @active_task
@@ -28,6 +40,7 @@ class TaskStorage
     puts "task '#{name}' unpaused" if @task_list[name].last_paused?
     @task_list[name] << TimeMark.new(time, false)
     puts "added track mark on task '#{name}' at: #{time}"
+    return true
   end
 
   def set_pause time, is_paused
@@ -79,7 +92,13 @@ class TaskStorage
   end
 
   def puts_task_marks_list name, max_lines
-    name = @active_task if name.nil?
+    if name.nil?
+      if @active_task.nil?
+        puts "no tasks exists, need to specify task name"
+        return
+      end
+      name = @active_task
+    end
     max_lines = -1 if max_lines.nil?
     raise(TaskNotFoundError, name) if @task_list[name].nil?
 

@@ -10,8 +10,9 @@ class LogTimeCLI < Thor
   desc "track [TASK_NAME]", "Add track mark on current time to certain task. Default task - current."
   def track name = nil
     $storage_file.modify{|storage|
+      return unless storage.name_valid?(name)
       storage.puts_current_period_duration
-      storage.add_time_mark(name, Time.now)
+      $storage_file.need_to_save = false unless storage.add_time_mark(name, Time.now)
       $logger.info "track #{name}"
     }
   end
