@@ -5,11 +5,6 @@ class TaskStorage
     @task_list = {}
   end
 
-  private def active_task
-    raise NoActiveTaskError if @active_task.nil?
-    @active_task
-  end
-
   def new_task name
     @task_list[name] = LoggedTask.new
     puts "created new task: '#{name}'"
@@ -23,7 +18,7 @@ class TaskStorage
 
   def add_time_mark name, time
     if name.nil?
-      name = active_task
+      name = @active_task
     else
       if name != @active_task
         set_pause time, true unless @active_task.nil?
@@ -36,23 +31,24 @@ class TaskStorage
   end
 
   def set_pause time, is_paused
-    if @task_list[active_task].last_paused? && is_paused
-      puts "task '#{active_task}' already paused"
+    if @task_list[@active_task].last_paused? && is_paused
+      puts "task '#{@active_task}' already paused"
       return
     end
-    @task_list[active_task] << TimeMark.new(time, is_paused)
-    puts "task '#{active_task}' #{is_paused ? 'paused' : 'unpaused'}"
+    @task_list[@active_task] << TimeMark.new(time, is_paused)
+    puts "task '#{@active_task}' #{is_paused ? 'paused' : 'unpaused'}"
   end
 
   def puts_total_time name
-    name = active_task if name.nil?
+    name = @active_task if name.nil?
     duration = @task_list[name].total_time
     puts "total time of task '#{name}': #{duration} hours"
   end
 
   def puts_current_period_duration
-    duration = @task_list[active_task].current_period_duration
-    puts "last period duration of task '#{active_task}': #{duration} hours"
+    return if @active_task.nil?
+    duration = @task_list[@active_task].current_period_duration
+    puts "last period duration of task '#{@active_task}': #{duration} hours"
   end
 
   def puts_task_list max_lines

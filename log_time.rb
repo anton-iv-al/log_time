@@ -10,10 +10,7 @@ class LogTimeCLI < Thor
   desc "track [TASK_NAME]", "Add track mark on current time to certain task. Default task - current."
   def track name = nil
     $storage_file.modify{|storage|
-      begin
-        storage.puts_current_period_duration
-      rescue NoActiveTaskError
-      end
+      storage.puts_current_period_duration
       storage.add_time_mark(name, Time.now)
       $logger.info "track #{name}"
     }
@@ -72,8 +69,6 @@ rescue StorageParseError
   puts "can't parse YAML from storage file"
 rescue StorageWriteError
   puts "can't write YAML to storage file"
-rescue NoActiveTaskError
-  puts "need active task"
 rescue ArgsError
   puts "wrong format of command args"
 rescue TaskNotFoundError => err
