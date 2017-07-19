@@ -3,3 +3,6 @@ end
 
 class StorageWriteError < RuntimeError
 end
+
+class NoActiveTaskError < RuntimeError
+end

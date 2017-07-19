@@ -2,7 +2,7 @@ require 'yaml'
 require_relative 'task_storage'
 
 class StorageFile
-  def initialize dir
+  def initialize dir = 'time_marks.yml'
     @dir = dir
   end
 
