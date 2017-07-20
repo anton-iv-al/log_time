@@ -14,8 +14,8 @@ class TimeMark
     @is_paused = is_paused
   end
 
-  def puts_mark spaces_count = 4
+  def puts_mark elapsed_hours, spaces_count = 4
     puts "#{@is_paused ? "paused" : "unpaused"}"+ '.'*spaces_count +
-             "#{@time}....[elapsed_time]: #{TimeMark.sec_to_hour(Time.now - @time.to_i)} hours ago"
+             "#{@time}....[elapsed_time]: #{elapsed_hours} hours"
   end
 end

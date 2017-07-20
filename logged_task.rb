@@ -18,19 +18,23 @@ class LoggedTask
     @mark_list[-1].time
   end
 
-  def total_time
-    last = @mark_list[0]
+  def total_time marks_count = @mark_list.length
+    marks = @mark_list.reverse.first(marks_count)
+    last = marks[0]
     current_period_duration + TimeMark.sec_to_hour(
-        @mark_list.inject(0){|total, mark|
-                pause_period = last.paused?
-                period = total + mark.time.to_i - last.time.to_i
+        marks.inject(0){|total, mark|
+                total = total +  last.time.to_i - mark.time.to_i unless mark.paused?
                 last = mark
-                pause_period ? 0 : period
+                total
     })
   end
 
   def current_period_duration
-    TimeMark.sec_to_hour(Time.now.to_i - @mark_list[-1].time.to_i)
+    if last_paused?
+      0
+    else
+      TimeMark.sec_to_hour(Time.now.to_i - @mark_list[-1].time.to_i)
+    end
   end
 
   def puts_marks_list max_lines
@@ -45,7 +49,11 @@ class LoggedTask
     marks = @mark_list.reverse
     marks = @mark_list.first(max_lines) if max_lines > 0
 
-    marks.each{|m| m.puts_mark(spaces_for_max + max_name_length - (m.paused? ? "paused" : "unpaused").length)}
+    marks.each_with_index{|m, i|
+      elapsed_hours = total_time(i+1)
+      spaces_count = spaces_for_max + max_name_length - (m.paused? ? "paused" : "unpaused").length
+      m.puts_mark(elapsed_hours, spaces_count)
+    }
   end
 end
 
