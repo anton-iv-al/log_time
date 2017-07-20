@@ -9,7 +9,7 @@ class StorageFile
     @need_to_save = true
   end
 
-  private def read
+  def read
     if FileTest::exists?(@dir)
       begin
         YAML.load(IO.read(@dir))
@@ -21,7 +21,7 @@ class StorageFile
     end
   end
 
-  private def write storage
+  def write storage
     unless @need_to_save
       @need_to_save = true
       return
@@ -44,12 +44,12 @@ class StorageFile
     write storage
   end
 
-  private def puts_saved
+  def puts_saved
     puts "***"
     puts "changes saved"
   end
 
-  private def puts_not_saved
+  def puts_not_saved
     puts "***"
     puts "changes not saved"
   end

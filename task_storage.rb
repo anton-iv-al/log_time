@@ -18,7 +18,7 @@ class TaskStorage
     puts "created new task: '#{name}'"
   end
 
-  private def set_active_task name
+  def set_active_task name
     new_task(name) unless @task_list[name]
     @active_task = name
     puts "active task switched to: '#{name}'"
@@ -96,7 +96,7 @@ class TaskStorage
     names.each{|n| puts_task(n, spaces_for_max + max_name_length - n.length)}
   end
 
-  private def puts_task name, spaces_count = 4
+  def puts_task name, spaces_count = 4
     puts "[task]:#{name}"+ '.'*spaces_count + "[last track]:#{@task_list[name].last_mark_time}"
   end
 
