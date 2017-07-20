@@ -14,6 +14,10 @@ class LoggedTask
     @mark_list.empty? ? false : @mark_list[-1].paused?
   end
 
+  def empty?
+    @mark_list.empty?
+  end
+
   def last_mark_time
     @mark_list[-1].time
   end
