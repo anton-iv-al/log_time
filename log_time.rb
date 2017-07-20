@@ -21,21 +21,13 @@ class LogTimeCLI < Thor
   def pause
     $storage_file.modify{|storage|
       storage.puts_current_period_duration
-      storage.set_pause(Time.now, true)
+      $storage_file.need_to_save = false unless storage.set_pause(Time.now, true)
       $logger.info "pause"
     }
   end
 
-  desc "unpause", "Unpause current task."
-  def unpause
-    $storage_file.modify{|storage|
-      storage.set_pause(Time.now, false)
-      $logger.info "unpause"
-    }
-  end
-
-  desc "total [TASK_NAME]", "Show time, spent to certain task. Default task - current."
-  def total name = nil
+  desc "elapsed [TASK_NAME]", "Show time, spent to certain task. Default task - current."
+  def elapsed name = nil
     $storage_file.modify{|storage|
       storage.puts_total_time(name)
       $storage_file.need_to_save = false

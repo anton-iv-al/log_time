@@ -33,27 +33,31 @@ class TaskStorage
       name = @active_task
     else
       if name != @active_task
-        set_pause time, true unless @active_task.nil?
+        set_pause(time, true) unless @active_task.nil?
         set_active_task name
       end
     end
-    puts "task '#{name}' unpaused" if @task_list[name].last_paused?
-    @task_list[name] << TimeMark.new(time, false)
+    set_pause(time, false) if @task_list[name].last_paused?
     puts "added track mark on task '#{name}' at: #{time}"
     return true
   end
 
   def set_pause time, is_paused
+    if @active_task.nil?
+      puts "no tasks exists"
+      return false
+    end
     if @task_list[@active_task].last_paused? && is_paused
       puts "task '#{@active_task}' already paused"
-      return
+      return false
     end
     @task_list[@active_task] << TimeMark.new(time, is_paused)
     puts "task '#{@active_task}' #{is_paused ? 'paused' : 'unpaused'}"
+    return true
   end
 
   def puts_total_time name
-    name = @active_task if name.nil?
+    return if (name = prepare_name(name)).nil?
     duration = @task_list[name].total_time
     puts "total time of task '#{name}': #{duration} hours"
   end
@@ -92,17 +96,23 @@ class TaskStorage
   end
 
   def puts_task_marks_list name, max_lines
-    if name.nil?
-      if @active_task.nil?
-        puts "no tasks exists, need to specify task name"
-        return
-      end
-      name = @active_task
-    end
+    return if (name = prepare_name(name)).nil?
+
     max_lines = -1 if max_lines.nil?
     raise(TaskNotFoundError, name) if @task_list[name].nil?
 
     puts "task: '#{name}'"
     @task_list[name].puts_marks_list max_lines
+  end
+
+  def prepare_name name
+    if name.nil?
+      if @active_task.nil?
+        puts "no tasks exists"
+        nil
+      end
+      @active_task
+    end
+    name
   end
 end
