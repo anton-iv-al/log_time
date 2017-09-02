@@ -38,13 +38,9 @@ class TaskStorage
       end
     end
 
-    if @task_list[name].last_paused? || @task_list[name].empty?
-      set_pause(time, false)
-      puts "added track mark on task '#{name}' at: #{time}"
-      return true
-    else
-      return false
-    end
+    set_pause(time, false)
+    puts "added track mark on task '#{name}' at: #{time}"
+    return true
   end
 
   def set_pause time, is_paused
