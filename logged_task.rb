@@ -33,12 +33,16 @@ class LoggedTask
     })
   end
 
-  def current_period_duration
-    if last_paused?
+  def current_period_duration is_check_for_pause = true
+    if last_paused? && is_check_for_pause
       0
     else
       TimeMark.sec_to_hour(Time.now.to_i - @mark_list[-1].time.to_i)
     end
+  end
+
+  def prewious_period_duration
+    TimeMark.sec_to_hour(@mark_list[-1].time.to_i - @mark_list[-2].time.to_i)
   end
 
   def puts_marks_list max_lines

@@ -54,6 +54,7 @@ class TaskStorage
     end
     @task_list[@active_task] << TimeMark.new(time, is_paused)
     puts "task '#{@active_task}' #{is_paused ? 'paused' : 'unpaused'}"
+    puts "task '#{@active_task}' #{is_paused ? 'paused' : 'unpaused'}"
     return true
   end
 
@@ -65,7 +66,7 @@ class TaskStorage
 
   def puts_current_period_duration
     return if @active_task.nil?
-    duration = @task_list[@active_task].current_period_duration
+    duration = @task_list[@active_task].current_period_duration(false)
     puts "last period duration of task '#{@active_task}': #{duration} hours"
   end
 

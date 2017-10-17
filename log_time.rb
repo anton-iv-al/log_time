@@ -12,7 +12,9 @@ class LogTimeCLI < Thor
     $storage_file.modify{|storage|
       return unless storage.name_valid?(name)
       storage.puts_current_period_duration
-      $storage_file.need_to_save = false unless storage.add_time_mark(name, Time.now)
+      unless storage.add_time_mark(name, Time.now)
+        $storage_file.need_to_save = false
+      end
       $logger.info "track #{name}"
     }
   end
@@ -21,7 +23,9 @@ class LogTimeCLI < Thor
   def pause
     $storage_file.modify{|storage|
       storage.puts_current_period_duration
-      $storage_file.need_to_save = false unless storage.set_pause(Time.now, true)
+      unless storage.set_pause(Time.now, true)
+        $storage_file.need_to_save = false
+      end
       $logger.info "pause"
     }
   end
