@@ -51,7 +51,7 @@ class LoggedTask
     spaces_for_max = 4
 
     marks = @mark_list.reverse
-    marks = @mark_list.first(max_lines) if max_lines > 0
+    marks = marks.first(max_lines) if max_lines > 0
 
     marks.each_with_index{|m, i|
       elapsed_hours = total_time(i+1)
