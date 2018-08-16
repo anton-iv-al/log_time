@@ -2,6 +2,7 @@ require 'thor'
 require 'logger'
 require_relative 'exceptions'
 require_relative 'storage_file'
+# for test
 
 $logger = Logger.new('time_marks.log', 10, 1024 * 1024)
 $storage_file = StorageFile.new('time_marks.yml')
